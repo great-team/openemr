@@ -3984,8 +3984,9 @@ function menu_overhaul_top($pid, $encounter, $title = "Eye Exam"): void
                             if ($display !== "fullscreen") { ?>
                                     <li class="divider"></li>
                                     <li id="menu_fullscreen" name="menu_fullscreen" <?php echo ($fullscreen ?? ''); ?>>
+                                        <!-- AI-generated code (GitHub Copilot) - Refactored to use URLSearchParams -->
                                         <a class="nav-link black"
-                                           onclick="openNewForm(<?php echo attr_js($GLOBALS['webroot']); ?> + '/interface/patient_file/encounter/load_form.php?formname=fee_sheet');top.restoreSession();dopopup(<?php echo attr_js($_SERVER['REQUEST_URI']); ?> + '&display=fullscreen&encounter=' + <?php echo attr_js(urlencode((string) $encounter)); ?>);"
+                                           onclick="openNewForm(<?php echo attr_js($GLOBALS['webroot']); ?> + '/interface/patient_file/encounter/load_form.php?formname=fee_sheet');top.restoreSession();(function(){const p=new URLSearchParams({display:'fullscreen',encounter:<?php echo attr_js(urlencode((string) $encounter)); ?>});dopopup(<?php echo attr_js($_SERVER['REQUEST_URI']); ?> + '&' + p.toString());})();"
                                            href="JavaScript:void(0);"
                                            ><?php echo xlt('Fullscreen'); ?></a>
                                     </li>
@@ -4984,9 +4985,9 @@ function display_GlaucomaFlowSheet($pid, $bywhat = 'byday'): void
     }
 
     $date_OU = array_unique($list);
-    usort($date_OU, "cmp");
+    usort($date_OU, cmp(...));
     $times_OU = $time_OU;
-    usort($times_OU, "cmp");
+    usort($times_OU, cmp(...));
 
     for ($a = 0; $a < count($date_OU); $a++) {
         if (!empty($GONIO_date)) {

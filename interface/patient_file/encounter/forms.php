@@ -40,7 +40,6 @@ use OpenEMR\Common\Forms\FormReportRenderer;
 
 use OpenEMR\Services\EncounterService;
 use OpenEMR\Services\UserService;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 $expand_default = (int)$GLOBALS['expand_form'] ? 'show' : 'hide';
 $reviewMode = false;
@@ -59,14 +58,7 @@ if ($is_group && !AclMain::aclCheckCore("groups", "glog", false, ['view', 'write
     exit();
 }
 
-if ($GLOBALS['kernel']->getEventDispatcher() instanceof EventDispatcher) {
-/**
- * @var EventDispatcher
- */
-    $eventDispatcher = $GLOBALS['kernel']->getEventDispatcher();
-} else {
-    throw new Exception("Could not get EventDispatcher from kernel", 1);
-}
+$eventDispatcher = $GLOBALS['kernel']->getEventDispatcher();
 // instantiate the locator at the beginning so our file caching can be re-used.
 $formLocator = new FormLocator();
 ?>
@@ -316,14 +308,20 @@ if (!empty($GLOBALS['google_signin_enabled']) && !empty($GLOBALS['google_signin_
         <?php } ?>
     });
 
+    // AI-generated code start (GitHub Copilot) - Refactored to use URLSearchParams
     // Process click on Delete link.
     function deleteme() {
-        dlgopen('../deleter.php?encounterid=' + <?php echo js_url($encounter); ?> +'&csrf_token_form=' + <?php echo js_url(CsrfUtils::collectCsrfToken()); ?>, '_blank', 500, 200, '', '', {
+        const params = new URLSearchParams({
+            encounterid: <?php echo js_escape($encounter); ?>,
+            csrf_token_form: <?php echo js_escape(CsrfUtils::collectCsrfToken()); ?>
+        });
+        dlgopen('../deleter.php?' + params.toString(), '_blank', 500, 200, '', '', {
             allowResize: false,
             allowDrag: true,
         });
         return false;
     }
+    // AI-generated code end
 
     // create new follow-up Encounter.
     function createFollowUpEncounter() {
@@ -651,12 +649,10 @@ if (!empty($GLOBALS['google_signin_enabled']) && !empty($GLOBALS['google_signin_
         <div class='encounter-summary-container'>
             <?php
             $dispatcher = $GLOBALS['kernel']->getEventDispatcher();
-            if ($dispatcher instanceof EventDispatcher) {
-                $event = new EncounterFormsListRenderEvent($_SESSION['encounter'], $attendant_type);
-                $event->setGroupId($groupId ?? null);
-                $event->setPid($pid ?? null);
-                $dispatcher->dispatch($event, EncounterFormsListRenderEvent::EVENT_SECTION_RENDER_PRE);
-            }
+            $event = new EncounterFormsListRenderEvent($_SESSION['encounter'], $attendant_type);
+            $event->setGroupId($groupId ?? null);
+            $event->setPid($pid ?? null);
+            $dispatcher->dispatch($event, EncounterFormsListRenderEvent::EVENT_SECTION_RENDER_PRE);
             ?>
             <div class='encounter-summary-column'>
                 <div>
@@ -1012,12 +1008,10 @@ if (!empty($GLOBALS['google_signin_enabled']) && !empty($GLOBALS['google_signin_
         }
 
         $dispatcher = $GLOBALS['kernel']->getEventDispatcher();
-        if ($dispatcher instanceof EventDispatcher) {
-            $event = new EncounterFormsListRenderEvent($_SESSION['encounter'], $attendant_type);
-            $event->setGroupId($groupId ?? null);
-            $event->setPid($pid ?? null);
-            $dispatcher->dispatch($event, EncounterFormsListRenderEvent::EVENT_SECTION_RENDER_POST);
-        }
+        $event = new EncounterFormsListRenderEvent($_SESSION['encounter'], $attendant_type);
+        $event->setGroupId($groupId ?? null);
+        $event->setPid($pid ?? null);
+        $dispatcher->dispatch($event, EncounterFormsListRenderEvent::EVENT_SECTION_RENDER_POST);
         ?>
 
     </div> <!-- end large encounter_forms DIV -->
